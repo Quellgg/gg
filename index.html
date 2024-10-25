@@ -2,34 +2,128 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Shop</title>
-    <link rel="stylesheet" href="file.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Многостраничное Web App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #0078ff;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        footer {
+            background: #0078ff;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="main">
-        <h1>Онлайн магазин</h1>
-        <img src="https://cdn-icons-png.flaticon.com/512/3595/3595455.png" alt="Shopping">
-        <p>Lorem ipsum dolor amet, consectetur adipisicing elit. Accusantium ipsum magni, molestias.</p>
-        <button id="buy">Купить</button>
-    </div>
-    <form id="form" style="display: none;">
-        <input type="text" placeholder="Имя" id="user_name" required>
-        <input type="email" placeholder="Email" id="user_email" required>
-        <input type="tel" placeholder="Телефон" id="user_phone" required>
-        <button type="submit" id="order">Оформить</button>
-    </form>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <header>
+        <h1 id="page-title">Главная страница</h1>
+        <nav>
+            <a href="#" onclick="showPage('home')">Главная</a>
+            <a href="#" onclick="showPage('about')">О нас</a>
+            <a href="#" onclick="showPage('contact')">Контакты</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Главная страница -->
+        <div id="home" class="page">
+            <h2>Добро пожаловать в наше веб-приложение!</h2>
+            <p>Это пример многостраничного веб-приложения для Telegram Web Apps.</p>
+        </div>
+
+        <!-- Страница "О нас" -->
+        <div id="about" class="page hidden">
+            <h2>Мы - ваша надежная команда</h2>
+            <p>Наша цель - предоставлять высококачественные услуги.</p>
+        </div>
+
+        <!-- Страница "Контакты" -->
+        <div id="contact" class="page hidden">
+            <h2>Свяжитесь с нами</h2>
+            <form id="contactForm">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <button type="submit">Отправить</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Ваша Компания</p>
+    </footer>
+
     <script>
         let tg = window.Telegram.Webapp;
-        let buy = document.getElementById('buy');
-        let order = document.getElementById('order');
+        tg.expand(); // Расширяем веб-приложение на полный экран
 
+        // Функция для показа выбранной страницы
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.add('hidden'); // Скрываем все страницы
+            });
+            document.getElementById(page).classList.remove('hidden'); // Показываем только выбранную страницу
 
-        buy.addEventListener("click", () => {
-            document.getElementById('main').style.display = 'none';
-            document.getElementById('form').style.display = 'block';
-            document.getElementById('user_name').value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
+            // Изменяем заголовок страницы
+            switch (page) {
+                case 'home':
+                    document.getElementById('page-title').textContent = 'Главная страница';
+                    break;
+                case 'about':
+                    document.getElementById('page-title').textContent = 'О нас';
+                    break;
+                case 'contact':
+                    document.getElementById('page-title').textContent = 'Контакты';
+                    break;
+            }
+        }
+
+        // Обработка отправки формы на странице "Контакты"
+        document.getElementById('contactForm')?.addEventListener('submit', function(event) {
+            event.preventDefault(); // Предотвращаем стандартное поведение формы
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+
+            // Здесь вы можете добавить логику для отправки данных обратно на сервер
+            console.log(`Имя: ${name}, Email: ${email}`);
+            tg.sendData(`Имя: ${name}, Email: ${email}`); // Отправляет данные в Telegram
+
+            alert('Ваши данные отправлены!'); // Уведомление для пользователя
+            showPage('home'); // Вернуться на главную страницу после отправки
         });
+
+        // Показать главную страницу по умолчанию
+        showPage('home');
     </script>
 </body>
 </html>
